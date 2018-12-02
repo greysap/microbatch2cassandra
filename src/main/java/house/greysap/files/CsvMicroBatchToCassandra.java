@@ -1,5 +1,6 @@
-package house.greysap;
+package house.greysap.files;
 
+import house.greysap.model.CustomerTransaction;
 import org.apache.spark.api.java.function.VoidFunction2;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -12,7 +13,7 @@ import org.apache.spark.sql.streaming.Trigger;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructType;
 
-public class ForeachBatchExample {
+public class CsvMicroBatchToCassandra {
     public static void main(String[] args) {
         SparkSession spark = SparkSession
                 .builder()
@@ -24,13 +25,13 @@ public class ForeachBatchExample {
 
         // Schema of incoming CSV-files
         StructType schema = new StructType()
-                .add("transactionId", DataTypes.IntegerType)
+                .add("transactionId", DataTypes.LongType)
                 .add("eventTime", DataTypes.TimestampType)
                 .add("customerId", DataTypes.IntegerType)
                 .add("transactionType", DataTypes.StringType) // Obviously, it's enough boolean for debit/credit.
                 .add("amount", DataTypes.DoubleType);
 
-        // Dataset with incoming records. Duplicated records will be ignored, if they arrive in the next 10 minutes.
+        // Dataset with incoming records. Duplicated records will be ignored, if they arrive in the next 60 minutes.
         Dataset<CustomerTransaction> transactions = spark
                 .readStream()
                 .option("sep", ",")
@@ -42,9 +43,6 @@ public class ForeachBatchExample {
                 .withWatermark("eventTime", "60 minutes")
                 .dropDuplicates("transactionId", "eventTime")
                 .as(ExpressionEncoder.javaBean(CustomerTransaction.class));
-
-        // Table structure for results:
-        // CREATE TABLE transaction_aggregates (customer_id int, total_amount double, transaction_type text, window text, PRIMARY KEY (customer_id, window, transaction_type));
 
         // Dataframe with aggregates
         Dataset<Row> customerWindowedAggregates = transactions

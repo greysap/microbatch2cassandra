@@ -14,3 +14,11 @@ Transactions arrive as CSV-files. Apache Cassandra is used as aggregates storage
 1. Read stream of CSV-files and filter off incorrect records.
 2. Use time-window aggregation.
 3. Write batches of aggregates to Cassandra via spark-cassandra-connector.
+
+### New requirement:
+1. Transactions arrive as JSON-messages from Kafka.
+
+### New solution:
+1. Read stream of JSON via spark-sql-kafka-0-10_2.11
+2. Use time-window aggregation as earlier.
+3. Write batches of aggregates to Cassandra via spark-cassandra-connector as earlier.

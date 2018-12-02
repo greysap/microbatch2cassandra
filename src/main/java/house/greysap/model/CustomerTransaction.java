@@ -1,15 +1,15 @@
-package house.greysap;
+package house.greysap.model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class CustomerTransaction {
     private long transactionId;
-    private Date eventTime;
+    private Timestamp eventTime;
     private int customerId;
     private String transactionType;
     private double amount;
 
-    public CustomerTransaction(long transactionId, Date eventTime, int customerId, String transactionType, double amount) {
+    public CustomerTransaction(long transactionId, Timestamp eventTime, int customerId, String transactionType, double amount) {
         this.transactionId = transactionId;
         this.eventTime = eventTime;
         this.customerId = customerId;
@@ -25,11 +25,11 @@ public class CustomerTransaction {
         this.transactionId = transactionId;
     }
 
-    public Date getEventTime() {
+    public Timestamp getEventTime() {
         return eventTime;
     }
 
-    public void setEventTime(Date eventTime) {
+    public void setEventTime(Timestamp eventTime) {
         this.eventTime = eventTime;
     }
 
